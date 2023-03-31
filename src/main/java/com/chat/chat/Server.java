@@ -23,27 +23,49 @@ public class  Server {
       new Server().process();
   } // end of main
 
-  public void broadcast(String user, String message)  {
+  public void broadcastLogin(String user)  {
+	// send message to all connected users
+	for ( HandleClient c : clients )
+		  c.sendUserLogin(user);
+	}
+
+	public void broadcastLogout(String user)  {
+		// send message to all connected users
+		for ( HandleClient c : clients )
+			  c.sendUserLogout(user);
+		}
+
+  public void broadcastMessage(String user, String message)  {
 	    // send message to all connected users
 	    for ( HandleClient c : clients )
-	       if ( ! c.getUserName().equals(user) )
 	          c.sendMessage(user,message);
   }
 
   class  HandleClient extends Thread {
-        String name = "";
+    String name = "";
 	BufferedReader input;
 	PrintWriter output;
+
 	public HandleClient(Socket  client) throws Exception {
          // get input and output streams
-	 input = new BufferedReader( new InputStreamReader( client.getInputStream())) ;
-	 output = new PrintWriter ( client.getOutputStream(),true);
-	 // read name
-	 name  = input.readLine();
-	 users.add(name); // add to vector
-	 start();
-        }
-        public void sendMessage(String uname,String  msg)  {
+		input = new BufferedReader( new InputStreamReader( client.getInputStream())) ;
+		output = new PrintWriter ( client.getOutputStream(),true);
+		// read name
+		name  = input.readLine();
+		users.add(name); // add to vector
+		broadcastLogin(name);
+		start();
+    }
+
+	public void sendUserLogin(String uname)  {
+	    	output.println( uname + " entrou no chat.");
+	}
+
+	public void sendUserLogout(String uname)  {
+		output.println( uname + " saiu no chat.");
+}
+
+    public void sendMessage(String uname,String  msg)  {
 	    output.println( uname + ":" + msg);
 	}
 		
@@ -58,9 +80,10 @@ public class  Server {
 		 if ( line.equals("end") ) {
 		   clients.remove(this);
 		   users.remove(name);
+		   broadcastLogout(name);
 		   break;
                  }
-		 broadcast(name,line); // method  of outer class - send messages to all
+		 broadcastMessage(name,line); // method  of outer class - send messages to all
 	       } // end of while
 	     } // try
 	     catch(Exception ex) {

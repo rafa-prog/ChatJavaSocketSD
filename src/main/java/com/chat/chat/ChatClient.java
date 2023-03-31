@@ -28,8 +28,8 @@ public class  ChatClient extends JFrame implements ActionListener {
     }
     
     public void buildInterface() {
-        btnSend = new JButton("Send");
-        btnExit = new JButton("Exit");
+        btnSend = new JButton("Enviar");
+        btnExit = new JButton("Sair");
         taMessages = new JTextArea();
         taMessages.setRows(10);
         taMessages.setColumns(50);
@@ -57,13 +57,14 @@ public class  ChatClient extends JFrame implements ActionListener {
         } else {
             // send message to server
             pw.println(tfInput.getText());
+            tfInput.setText("");
         }
     }
     
     public static void main(String ... args) {
     
         // take username from user
-        String name = JOptionPane.showInputDialog(null,"Enter your name :", "Username",
+        String name = JOptionPane.showInputDialog(null,"Digite seu nome :", "Nome",
              JOptionPane.PLAIN_MESSAGE);
         String servername = "localhost";  
         try {
