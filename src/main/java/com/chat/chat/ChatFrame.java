@@ -6,7 +6,7 @@ import java.io.ObjectInputStream;
 import java.net.Socket;
 
 /**
- *
+ * ESSA CLASSE É APENAS UMA INTERFACE E FOI USADA PARA TESTES
  * @author rafab
  */
 public class ChatFrame extends javax.swing.JFrame {

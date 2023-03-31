@@ -1,7 +1,6 @@
 package com.chat.chat;
 
 import java.io.*;
-import java.util.*;
 import java.net.*;
 import javax.swing.*;
 import java.awt.*;
@@ -17,16 +16,17 @@ public class  ChatClient extends JFrame implements ActionListener {
     Socket client;
     
     public ChatClient(String uname,String servername) throws Exception {
-        super(uname);  // set title for frame
+        super(uname);  // nome do frame
         this.uname = uname;
-        client  = new Socket(servername,9999);
+        client  = new Socket(servername,3000);
         br = new BufferedReader( new InputStreamReader( client.getInputStream()) ) ;
         pw = new PrintWriter(client.getOutputStream(),true);
-        pw.println(uname);  // send name to server
+        pw.println(uname);  // envia o nome para o servidor
         buildInterface();
-        new MessagesThread().start();  // create thread to listen for messages
+        new MessagesThread().start();  // cria thread para ouvir as mensagens
     }
     
+    // cria a interface
     public void buildInterface() {
         btnSend = new JButton("Enviar");
         btnExit = new JButton("Sair");
@@ -52,10 +52,10 @@ public class  ChatClient extends JFrame implements ActionListener {
     
     public void actionPerformed(ActionEvent evt) {
         if ( evt.getSource() == btnExit ) {
-            pw.println("end");  // send end to server so that server knows about the termination
+            pw.println("end");  // envia end para o servidor para ele saber quando parar esse client
             System.exit(0);
         } else {
-            // send message to server
+            // envia mensagem para o servidor
             pw.println(tfInput.getText());
             tfInput.setText("");
         }
@@ -63,7 +63,7 @@ public class  ChatClient extends JFrame implements ActionListener {
     
     public static void main(String ... args) {
     
-        // take username from user
+        // pega o username do user
         String name = JOptionPane.showInputDialog(null,"Digite seu nome :", "Nome",
              JOptionPane.PLAIN_MESSAGE);
         String servername = "localhost";  
@@ -75,7 +75,6 @@ public class  ChatClient extends JFrame implements ActionListener {
         
     } // end of main
     
-    // inner class for Messages Thread
     class  MessagesThread extends Thread {
         public void run() {
             String line;

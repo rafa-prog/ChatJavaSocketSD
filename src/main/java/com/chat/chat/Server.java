@@ -1,19 +1,19 @@
 package com.chat.chat;
 
-// Chat Server runs at port no. 9999
 import java.io.*;
 import java.util.*;
 import java.net.*;
 import static java.lang.System.out;
+
 public class  Server {
   Vector<String> users = new Vector<String>();
   Vector<HandleClient> clients = new Vector<HandleClient>();
   public void process() throws Exception  {
-      ServerSocket server = new ServerSocket(9999,10);
+      ServerSocket server = new ServerSocket(3000,10); // Cria um servidor na porta 3000 com um backlog de 10
       out.println("Server Started...");
-      while( true) {
- 		 Socket client = server.accept();
- 		 HandleClient c = new HandleClient(client);
+      while(true) { // Servidor executa até matar no terminal ou disparar erro
+ 		 Socket client = server.accept(); 
+ 		 HandleClient c = new HandleClient(client); // Toda vez q receber um client salva nas duas listas e usa como thread
   		 clients.add(c);
          System.out.println(clients);
          System.out.println(users);
@@ -24,19 +24,19 @@ public class  Server {
   } // end of main
 
   public void broadcastLogin(String user)  {
-	// send message to all connected users
+	// envia mensagem para todos os users que alguém conectou-se
 	for ( HandleClient c : clients )
 		  c.sendUserLogin(user);
 	}
 
 	public void broadcastLogout(String user)  {
-		// send message to all connected users
+		// envia mensagem para todos os users que alguém desconectou-se
 		for ( HandleClient c : clients )
 			  c.sendUserLogout(user);
-		}
+	}
 
   public void broadcastMessage(String user, String message)  {
-	    // send message to all connected users
+	    // envia mensagem para todos os users
 	    for ( HandleClient c : clients )
 	          c.sendMessage(user,message);
   }
@@ -47,12 +47,12 @@ public class  Server {
 	PrintWriter output;
 
 	public HandleClient(Socket  client) throws Exception {
-         // get input and output streams
+         // input and output streams
 		input = new BufferedReader( new InputStreamReader( client.getInputStream())) ;
 		output = new PrintWriter ( client.getOutputStream(),true);
-		// read name
+		// pega o nome
 		name  = input.readLine();
-		users.add(name); // add to vector
+		users.add(name);
 		broadcastLogin(name);
 		start();
     }
@@ -63,7 +63,7 @@ public class  Server {
 
 	public void sendUserLogout(String uname)  {
 		output.println( uname + " saiu no chat.");
-}
+	}
 
     public void sendMessage(String uname,String  msg)  {
 	    output.println( uname + ":" + msg);
@@ -83,7 +83,7 @@ public class  Server {
 		   broadcastLogout(name);
 		   break;
                  }
-		 broadcastMessage(name,line); // method  of outer class - send messages to all
+		 broadcastMessage(name,line);
 	       } // end of while
 	     } // try
 	     catch(Exception ex) {
